@@ -9,7 +9,7 @@ permalink: /faq/
 
 ## What does PIT stand for?
 
-PIT began life as a spike to run JUnit tests in parallel, using seperate classloaders
+PIT began life as a spike to run JUnit tests in parallel, using separate classloaders
 to isolate static state. Once this was working it turned out to be a much less interesting problem
 than mutation testing which initially needed a lot of the same plumbing.
 
@@ -58,6 +58,16 @@ Note that PIT is a bytecode mutator - it does not compile your code but instead 
 the byte code in memory. Your code must be on the classpath - PIT only requires the location
 of your source code in order to generate a human readable report.
 
+## My tests normally run green but PIT says the suite isn't green
+
+Most commonly this is because either :-
+
+* PIT is picking up tests that are not included/are excluded in the normal test config
+* Some test rely on an environment variable or other property set in the test config, but not set in the pitest config
+* The tests have a hidden order dependency that is not revealed during the normal test run 
+
+If you are using an unusual or custom JUnit runner this can also sometimes causes problems. To make things fast PIT does some tricky stuff to split your tests into small independent units. This works well with most JUnit runners but if you encounter one where it doesn't please post to the user group. 
+
 ## Will PIT work with my mocking framework?
 
 PIT is tested against the major mocking frameworks as part of its build. 
@@ -81,11 +91,11 @@ PIT chooses and prioritises tests based on three factors
 * Test naming convention 
 
 Per test case line coverage information is first gathered and all tests that do not exercise
-the mutated line of code are disguarded. The remaining tests are then ordered by
+the mutated line of code are discarded. The remaining tests are then ordered by
 increasing execution time - test cases that belong to a class that is identified
 as a unit test for the mutated class are however weighted above other tests.
 
-A class is considered to be the unit test for a particular class if it matches the standard JUnit naming convetion of FooTest or TestFoo.
+A class is considered to be the unit test for a particular class if it matches the standard JUnit naming convention of FooTest or TestFoo.
 
 Unlike earlier systems PIT does **not** require that your tests follow this naming convention in order for it to work. Test names are
 used only as part of a heuristic to optimise run order.
@@ -96,7 +106,7 @@ Timeouts when running mutation tests are caused by one of two things
 
 1 A mutation that causes an infinite loop
 
-2 PIT thinking an infinite loop has occured but being wrong
+2 PIT thinking an infinite loop has occurred but being wrong
 
 In order to detect infinite loops PIT measures the normal execution time of each test
 without any mutations present. When the test is run in the presence of a mutation
@@ -112,7 +122,7 @@ required for that test. This can be particularly pronounced in code that uses XM
 frameworks such as jaxb where classloading may take several seconds.
 
 When PIT runs the tests against a mutation the order of the tests will be different. Tests that
-previously took miliseconds may now take seconds as they now carry the overhead of classloading. 
+previously took milliseconds may now take seconds as they now carry the overhead of classloading. 
 PIT may therefore incorrectly flag the mutation as causing an infinite loop.
 
 An fix for this issue may be developed in a future version of PIT. In the meantime
@@ -125,7 +135,7 @@ to a large value with **--timeoutConst** (**timeoutConstant** in maven).
 Java 7 introduced stricter requirements for verifying stack frames, which caused issues in
 earlier versions of PIT. It is believed that there were all resolved in 0.29.
 
-If you are using 0.29 and see a verify error, please raise a defect. The issue can be worked around
+If you see a verify error, please raise a defect. The issue can be worked around
 by passing -XX:-UseSplitVerifier to the child jvm processes that PIT launches using the **jvmArgs** option. 
 
 ## How does PIT compare the mutation testing system X
@@ -134,14 +144,13 @@ See [mutation testing systems compared](/java_mutation_testing_systems)
 
 ## I have mutations that are not killed but should be
 
-Are the mutations in finally blocks? Do you seem to have two ore more identical mutations, some killed and some not?
+Are the mutations in finally blocks? Do you seem to have two or more identical mutations, some killed and some not?
 
 If so this is due to the way in which the java compiler handles finally blocks. Basically the compiler creates
-a copy of the contents of the finally block for each possible exit point. PIT creates seperate mutations for each of
+a copy of the contents of the finally block for each possible exit point. PIT creates separate mutations for each of
 the copied blocks. Most test suites are only able to kill one of these mutations.
 
-As of 0.28 PIT contains experimental support for detecting inlined code. To activate it add the **detectInlinedCode** option to your
-your configuration. 
+As of 0.28 PIT contains experimental support for detecting inlined code that is now active by default.
 
 ## Can I activate more mutators without relisting all the default ones?
 
@@ -199,10 +208,11 @@ See [PIT Gradle plugin](http://gradle-pitest-plugin.solidsoft.info/)
 
 ## Is there any IDE integration?
 
-The only IDE integration at present is the work Phil Glover has done towards an eclipse plugin
-[Pitclipse](https://github.com/philglover/pitclipse).
+Phil Glover maintains an Eclipse plugin. [Pitclipse](https://github.com/philglover/pitclipse)
 
-It is however possible to launch PIT from most IDEs as a Java application.
+Michal Jedynak maintains an IntelliJ plugin. [PIT intellij plugin](http://plugins.intellij.net/plugin/?idea&pluginId=7119)
+
+It is also possible to launch PIT from most other IDEs as a Java application.
 
 ## I'd like to help out, what can I do?
 

@@ -8,3 +8,5 @@ site.hi
 *.ipr
 *.iml
 *.iws
+.idea
+*.lock

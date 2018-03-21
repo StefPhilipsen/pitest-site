@@ -15,16 +15,20 @@ Download the pitest-command-line and pitest jars and place them somewhere conven
 
 ## Getting started
 
+It recommended that you use one of the provided build system plugins instead of the commandline tool. The build plugins are easier to use and you are much less likely to encounter configuration problems. 
+
+Please only use the commandline tool if you have a really good reason to do so.
+
 A mutation coverage report can be launched from the command line as follows
 
-<pre class="prettyprint lang-bash">
+```
 java -cp &lt;your classpath including pit jar and dependencies&gt; \
     org.pitest.mutationtest.commandline.MutationCoverageReport \
     --reportDir <outputdir> \
     --targetClasses com.your.package.tobemutated* \
-    --targetTests com.your.packge.*
-    --sourceDirs <pathtosource> \
-</pre>
+    --targetTests com.your.package.*
+    --sourceDirs <pathtosource>
+```
 
 The command line jar, core pitest jar and either JUnit or TestNG will need to be on the classpath. 
 
@@ -53,16 +57,15 @@ The classes to be mutated. This is expressed as a comma separated list of globs.
 
 For example
 
-<pre class="prettyprint lang-bash">
+```
 com.mycompany.*
-</pre>
+```
 
 or
 
-<pre class="prettyprint lang-bash">
+```
 com.mycompany.package.*, com.mycompany.packageB.Foo, com.partner.*
-</pre>
-
+```
 
 ### \--targetTests
 
@@ -122,9 +125,13 @@ globs will be excluded from mutation.
 
 ### \--excludedClasses
 
-List of globs to match against class names. Matching classes will be excluded
-from mutation. Matching test classes will not be run (note if a test suite includes an
-excluded class, then it will "leak" back in).
+List of globs to match against class names. Matching classes will be excluded from mutation. 
+
+Prior to release 1.3.0 tests matching this filter were also exlcuded from being run. From 1.3.0 onwards tests are excluded with the excludedTests parameter.
+
+### \--excludedTests
+
+List of globs to match against test class names. Mathcing tests will not be run (note if a test suite includes an excluded class, then it will "leak" back in).
 
 ### \--avoidCallsTo
 
@@ -199,20 +206,17 @@ candidate for mutation.
 
 PIT will always attempt not to mutate test classes even if they are defined on a mutable path.
 
+### \--testPlugin
 
-### \--includedTestNGGroups
+Plugin to use to run tests. Defaults to junit.
 
-Comma separated list of TestNG groups to include in mutation analysis.
+### \--includedGroups
 
-### \--excludedTestNGGroups
+Comma separated list of TestNG groups/JUnit categories to include in mutation analysis. Note that only class level categories are supported.
 
-Comma separated list of TestNG groups to exclude from mutation analysis
+### \--excludedGroups
 
-### \--configFile (experimental)
-
-Separate config file from which to PIT configuration. If supplied all other parameters will be ignore and the content of this file used.
-
-*TODO - document the format.*
+Comma separated list of TestNG groups/JUnit categories to exclude from mutation analysis. Note that only class level categories are supported.
 
 ### \--detectInlinedCode
 
@@ -226,20 +230,20 @@ In the case of any doubt PIT will act cautiously and assume that the code is not
 
 This will be detected as two separate inlined instructions
 
-<pre class="prettyprint lang-java">
+```java
 finally {
   int++;
   int++;
 }
-</pre>
+```
 
 But this will look confusing so PIT will assume no in-lining is taking place.
 
-<pre class="prettyprint lang-java">
+```java
 finally {
   int++; int++;
 }
-</pre>
+```
 
 This sort of pattern might not be common with integer addition, but things like string concatenation are likely to produce multiple similar instructions on the same line.
 
@@ -249,13 +253,13 @@ By default PIT will create a date and time stamped folder for its output each it
 
 ### \--mutationThreshold
 
-Mutation score threshold at which to fail build.
+Mutation score threshold below which the build will fail. This is an integer percent (0-100) that represents the fraction of killed mutations out of all mutations.
 
 Please bear in mind that your build may contain equivalent mutations. Careful thought must therefore be given when selecting a threshold.
 
 ### \--coverageThreshold
 
-Line coverage threshold at which to fail build.
+Line coverage threshold below which the build will fail. This is an integer percent (0-100) that represents the fraction of the project covered by the tests.
 
 ### \--historyInputLocation
 
@@ -270,7 +274,7 @@ Path to write history information for incremental analysis. May be the same as h
 
 ### Mutate all classes in package example.foo (and sub pacakges) in two threads potentially using any test on class path but do not mutate hashCode or equals methods
 
-<pre class="prettyprint lang-bash">
+```
 java -cp &lt;your classpath&gt; \
      org.pitest.mutationtest.commandline.MutationCoverageReport \
     --reportDir c:\\mutationReports \
@@ -278,17 +282,16 @@ java -cp &lt;your classpath&gt; \
     --sourceDirs c:\\myProject\\src \
     --targetTests example.foo*
     --threads 2
-    --excludedMethods hasCode,equals
-</pre>
+    --excludedMethods hashCode,equals
+```
 
 ### Mutate the classes example.foo.Specific and example.foo.Other using tests from the Suite example.ReflectionSuite that directly call the mutees
 
-<pre class="prettyprint lang-bash">
+```
 java -cp &lt;your classpath&gt; \
      org.pitest.mutationtest.commandline.MutationCoverageReport \
     --reportDir c:\\mutationReports \
     --targetClasses example.foo.Specfic, example.foo.Other \
     --targetTests example.ReflectionSuite
     --sourceDirs c:\\myProject\\src \
-    --dependencyDistance 0
-</pre>
+```    

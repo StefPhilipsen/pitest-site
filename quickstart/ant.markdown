@@ -21,7 +21,7 @@ First define the PIT task within your build
 &lt;taskdef name="pitest" classname="org.pitest.ant.PitestTask" classpathref="pit.path" /&gt;
 </pre>
 
-The referenced classpath should include both pitest.jar and pitest-ant.jar along with any plugins you wish to use. The test library (i.e JUnit or TestNG) must currently also be referenced here as well as on your compilation classpath. This requirement will hopefully be removed in a future release.
+The referenced classpath should pitest.jar, pitest-ant.jar and pitest-entry.jar along with any plugins you wish to use. The test library (i.e JUnit or TestNG), xstream and xmlpull must also be referenced here as well as on your compilation classpath. The requirement for these additional jars will hopefully be removed in a future release.
 
 Next create a target
 
@@ -55,12 +55,12 @@ PIT supports a number of configuration options, their behaviour is identical to 
 
 ## Quick start example
 
-To help people evaluate PIT an example project using ant is provided at [pit ant example](http://code.google.com/p/pit-ant-example/)
+To help people evaluate PIT an example project using ant is provided at [pit ant example](https://github.com/hcoles/pitest-ant-example)
 
 To try it out checkout the source
 
 <pre class="prettyprint lang-bash">
-hg clone https://code.google.com/p/pit-ant-example/
+git clone https://github.com/hcoles/pitest-ant-example.git
 </pre>
 
 then run the pit target
